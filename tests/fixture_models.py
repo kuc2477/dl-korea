@@ -50,8 +50,15 @@ def user(request, session):
 
 
 @pytest.fixture(scope='function')
-def plan(request, session, user):
-    p = Plan()
+def plan(request, session, user, category, unit):
+    p = Plan(
+        user=user, category=category, load_unit=unit,
+        title='test plan title',
+        description='test plan description',
+        objective_load=10,
+        objective_daily_load=1,
+        cron=None
+    )
     session.add(p)
     session.commit()
 
