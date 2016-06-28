@@ -12,7 +12,6 @@ from sqlalchemy.ext.declarative import declared_attr
 from ..categories.models import Category, Unit
 from ..users.models import User
 from ..extensions import db
-from .mixins import OrderedTreeMixin
 
 
 class Plan(db.Model):
@@ -75,7 +74,7 @@ class Plan(db.Model):
     updated_at = Column(DateTime, default=datetime.now)
 
 
-class Stage(OrderedTreeMixin, db.Model):
+class Stage(db.Model):
     @declared_attr
     def plan_id(cls):
         return Column(Integer, ForeignKey(Plan.id), nullable=False)

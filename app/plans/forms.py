@@ -28,12 +28,6 @@ class BasePlanForm(Form):
     objective_daily_load = IntegerField('Objective Load', [NumberRange(min=0)])
 
 
-class BaseStageForm(Form):
-    plan = IntegerField('Plan', [NumberRange(min=0)])
-    title = StringField('Title', [Length(min=2, max=50)])
-    load = IntegerField('Load', [NumberRange(min=0)])
-
-
 class PlanCreationForm(BasePlanForm):
     pass
 
@@ -42,4 +36,11 @@ class PlanUpdateForm(BasePlanForm):
     pass
 
 
-class StageUpdateForm
+class BaseStageForm(Form):
+    plan = IntegerField('Plan', [NumberRange(min=0)])
+    title = StringField('Title', [Length(min=2, max=50)])
+    load = IntegerField('Load', [NumberRange(min=0)])
+
+
+class StageUpdateForm(BaseStageForm):
+    pass
