@@ -14,6 +14,9 @@ class Category(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
 
+    def __init__(self, name=None):
+        self.name = name
+
 
 class Unit(db.Model):
     @declared_attr
@@ -23,6 +26,11 @@ class Unit(db.Model):
     @declared_attr
     def category(cls):
         return relationship(Category, 'units')
+
+    def __init__(self, category, name, integer):
+        self.category = category
+        self.name = name
+        self.integer = integer
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)

@@ -40,6 +40,19 @@ class Plan(db.Model):
     def load_unit(cls):
         return relationship(Unit, 'plans')
 
+    def __init__(self, title=None, description=None,
+                 private=False, active=True, load_index=0,
+                 objective_load=None, objective_daily_load=None,
+                 child_stage_ids=None):
+        self.title = title
+        self.description = description
+        self.private = private
+        self.active = active
+        self.load_index = load_index
+        self.objective_load = objective_load
+        self.objective_daily_load = objective_daily_load
+        self.child_stage_ids = child_stage_ids or []
+
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
@@ -72,6 +85,11 @@ class Stage(db.Model):
     @declared_attr
     def plan(cls):
         return relationship(Plan, backref='descendent_stages')
+
+    def __init__(self, plan=None, title=None, load=0):
+        self.plan = plan
+        self.title = title
+        self.load = load
 
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
