@@ -17,10 +17,8 @@ from flask.ext.restful import (
     abort,
 )
 from ..extensions import db
-from .models import (
-    User,
-    UserResource
-)
+from .models import User
+from .resources import UserResource
 from .forms import (
     AuthenticationForm,
     SignupForm,

@@ -1,3 +1,5 @@
+import itertools
+from collections import deque
 from datetime import datetime
 from sqlalchemy import (
     Column,
@@ -9,9 +11,16 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
+from croniter import croniter
 from ..categories.models import Category, Unit
 from ..users.models import User
 from ..extensions import db
+
+
+def _count(iterator):
+    counter = itertools.count()
+    deque(itertools.izip(iterator, counter), maxlen=0)
+    return next(counter)
 
 
 class Plan(db.Model):
@@ -55,6 +64,33 @@ class Plan(db.Model):
         self.objective_load = objective_load
         self.objective_daily_load = objective_daily_load
         self.child_stage_ids = child_stage_ids or []
+
+    @classmethod
+    def _get_datetimes(cls, cron, start_at, end_at):
+        iterator = croniter(cron, start_at)
+        datetimes = itertools.takewhile(lambda d: d <= end_at, iterator)
+        return datetimes
+
+    @classmethod
+    def _get_objective_load_from(
+            cls, objective_daily_load, cron, start_at, end_at):
+        datetimes = cls._get_datetimes(cron, start_at, end_at)
+        return _count(datetimes) * objective_daily_load
+
+    @classmethod
+    def _get_objective_daily_load_from(
+            cls, objective_load, cron, start_at, end_at):
+        datetimes = cls._get_datetimes(cron, start_at, end_at)
+        return objective_load / _count(datetimes)
+
+    @classmethod
+    def _get_end_from(cls, objective_load, objective_daily_load, cron):
+        count = (int)(objective_load / objective_daily_load)
+        iterator = croniter(cron, datetime.now())
+        return next(itertools.islice(iterator, count))
+
+    def stage(self, titles, loads):
+        return [Stage(self, title, load) for title, load in zip(titles, loads)]
 
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
