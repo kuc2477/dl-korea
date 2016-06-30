@@ -26,3 +26,9 @@ class SignupForm(Form):
     password_validation = PasswordField(
         'Password Validation', [EqualTo('password')]
     )
+
+
+@abort_on_validation_fail
+class UserUpdateForm(Form):
+    firstname = StringField('Firstname', [Length(min=2, max=50)])
+    lastname = StringField('Lastname', [Length(min=2, max=50)])
