@@ -1,7 +1,7 @@
 import pytest
 from app.users.models import User
 from app.plans.models import Plan, Stage
-from app.categories.model import Category, Unit
+from app.categories.models import Category, Unit
 
 
 @pytest.fixture(scope='function')

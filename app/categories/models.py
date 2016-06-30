@@ -25,9 +25,9 @@ class Unit(db.Model):
 
     @declared_attr
     def category(cls):
-        return relationship(Category, 'units')
+        return relationship(Category, backref='units')
 
-    def __init__(self, category, name, integer):
+    def __init__(self, category, name, integer=True):
         self.category = category
         self.name = name
         self.integer = integer

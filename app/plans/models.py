@@ -38,7 +38,7 @@ class Plan(db.Model):
 
     @declared_attr
     def category(cls):
-        return relationship(Category, 'plans')
+        return relationship(Category, backref='plans')
 
     @declared_attr
     def load_unit_id(cls):
@@ -46,10 +46,10 @@ class Plan(db.Model):
 
     @declared_attr
     def load_unit(cls):
-        return relationship(Unit, 'plans')
+        return relationship(Unit, backref='plans')
 
     def __init__(self, user=None, category=None, load_unit=None,
-                 title=None, description=None,
+                 title=None, description=None, cron=None,
                  private=False, active=True, load_index=0,
                  objective_load=None, objective_daily_load=None,
                  child_stage_ids=None):

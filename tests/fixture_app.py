@@ -27,7 +27,7 @@ def db(app):
     database.drop_all()
 
 
-@pytest.fixture(scope='function')
+@pytest.yield_fixture(scope='function')
 def session(db):
     connection = db.engine.connect()
     transaction = connection.begin()
