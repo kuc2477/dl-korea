@@ -1,3 +1,4 @@
+from datetime import datetime
 import pytest
 from app.users.models import User
 from app.plans.models import Plan, Stage
@@ -21,6 +22,8 @@ def category(request, session):
 @pytest.fixture(scope='function')
 def unit(request, session, category):
     u = Unit(category=category, name='test unit', integer=True)
+    session.add(u)
+    session.commit()
 
     def teardown():
         session.delete(u)
@@ -36,7 +39,9 @@ def user(request, session):
         email='testemail@test.com',
         firstname='testfirstname',
         lastname='testlastname',
-        password='testpassword'
+        password='testpassword',
+        confirmed=True,
+        confirmed_on=datetime.now(),
     )
     session.add(u)
     session.commit()
@@ -55,8 +60,8 @@ def plan(request, session, user, category, unit):
         user=user, category=category, load_unit=unit,
         title='test plan title',
         description='test plan description',
-        objective_load=10,
-        objective_daily_load=1,
+        total_load=10,
+        daily_load=1,
         cron='0 0 1 * *',
     )
     session.add(p)

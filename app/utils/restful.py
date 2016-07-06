@@ -1,5 +1,13 @@
 from flask import url_for
-from flask.ext.restful import Resource, reqparse
+from flask.ext.restful import Resource, reqparse, abort
+
+
+def assert_ownership(instance, user, owner_attr='user', primary_key='id'):
+    owner = getattr(instance, owner_attr)
+    owner_id = getattr(owner, primary_key)
+    user_id = getattr(user, primary_key)
+    if owner_id != user_id:
+        abort(401)
 
 
 class PaginatedResource(Resource):

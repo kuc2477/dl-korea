@@ -9,7 +9,7 @@ from sqlalchemy import (
     DateTime,
     Boolean,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declared_attr
 from croniter import croniter
 from ..categories.models import Category, Unit
@@ -32,7 +32,8 @@ class Plan(db.Model):
 
     @declared_attr
     def user(cls):
-        return relationship(User, backref='plans')
+        return relationship(User, backref=backref(
+            'plans', cascade='all, delete-orphan'))
 
     @declared_attr
     def category_id(cls):
@@ -40,7 +41,8 @@ class Plan(db.Model):
 
     @declared_attr
     def category(cls):
-        return relationship(Category, backref='plans')
+        return relationship(Category, backref=backref(
+            'plans', cascade='all, delete-orphan'))
 
     @declared_attr
     def load_unit_id(cls):
@@ -48,7 +50,8 @@ class Plan(db.Model):
 
     @declared_attr
     def load_unit(cls):
-        return relationship(Unit, backref='plans')
+        return relationship(Unit, backref=backref(
+            'plans', cascade='all, delete-orphan'))
 
     def __init__(self, user=None, category=None, load_unit=None,
                  private=False, active=True,
@@ -72,6 +75,53 @@ class Plan(db.Model):
         self.cron = cron or self.DEFAULT_CRON
         self.start_at = start_at or datetime.now()
         self.end_at = end_at
+
+    @classmethod
+    def create(cls, **kwargs):
+        daily_load = kwargs.pop('daily_load')
+        total_load = kwargs.pop('total_load')
+        cron = kwargs.pop('cron')
+        start_at = kwargs.pop('start_at')
+        end_at = kwargs.pop('end_at')
+
+        if not total_load:
+            assert(daily_load and cron and start_at and end_at), \
+                '''Some of required keyword arguments are missing:
+            daily_load: {}
+            cron: {}
+            start_at: {}
+            end_at: {}
+            '''.format(daily_load, cron, start_at, end_at)
+            return cls.from_missing_total_load(
+                daily_load=daily_load, cron=cron,
+                start_at=start_at, end_at=end_at,
+                **kwargs
+            )
+        elif not daily_load:
+            assert(total_load and cron and start_at and end_at), \
+                '''Some of required keyword arguments are missing:
+            total_load: {}
+            cron: {}
+            start_at: {}
+            end_at: {}
+            '''.format(total_load, cron, start_at, end_at)
+            return cls.from_missing_daily_load(
+                total_load=total_load, cron=cron,
+                start_at=start_at, end_at=end_at,
+                **kwargs
+            )
+        else:
+            assert(total_load and daily_load and cron and start_at), \
+                '''Some of required keyword arguments are missing:
+            total_load: {}
+            daily_load: {}
+            cron: {}
+            start_at: {}
+            '''.format(total_load, daily_load, cron, start_at)
+            return cls.from_missing_end(
+                total_load=total_load, daily_load=daily_load, cron=cron,
+                start_at=start_at, **kwargs
+            )
 
     @classmethod
     def from_missing_total_load(
@@ -132,6 +182,30 @@ class Plan(db.Model):
         iterator = croniter(cron, start_at or datetime.now())
         return next(itertools.islice(iterator, count))
 
+    def update(self, total_load, daily_load, cron, start_at, end_at,
+               commit=False):
+        if not total_load:
+            total_load = self.get_total_load_from(
+                daily_load, cron, start_at, end_at
+            )
+        elif not daily_load:
+            daily_load = self.get_daily_load_from(
+                total_load, cron, start_at, end_at
+            )
+        elif not end_at:
+            end_at = self.get_end_from(
+                total_load, daily_load, cron, start_at
+            )
+
+        self.total_load = total_load
+        self.daily_load = daily_load
+        self.cron = cron
+        self.start_at = start_at
+        self.end_at = end_at
+
+        if commit:
+            db.session.commit()
+
     def stage(self, titles, loads):
         return [Stage(self, title, load) for title, load in zip(titles, loads)]
 
@@ -160,7 +234,8 @@ class Stage(db.Model):
 
     @declared_attr
     def plan(cls):
-        return relationship(Plan, backref='stages')
+        return relationship(Plan, backref=backref(
+            'stages', cascade='all, delete-orphan'))
 
     def __init__(self, plan=None, title=None, load=0):
         self.plan = plan

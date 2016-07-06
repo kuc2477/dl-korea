@@ -12,8 +12,8 @@ def abort_on_validation_fail(form_cls=None, code=400):
     validate = form_cls.validate
 
     @wraps(validate)
-    def wrapper(*args, **kwargs):
-        if not validate(*args, **kwargs):
+    def wrapper(self, *args, **kwargs):
+        if not validate(self, *args, **kwargs):
             abort(code)
         else:
             return True

@@ -35,6 +35,12 @@ def configure_login(app):
     login_manager.login_view = 'users.login'
     login_manager.login_message = 'Please log in to enter this page!'
 
+    from .users.models import User
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(user_id)
+
 
 def configure_admin(app):
     admin.init_app(app)
@@ -45,4 +51,4 @@ def configure_mail(app):
 
 
 def register_blueprints(app, *blueprints):
-    [app.register_blueprint(bp) for bp in blueprints]
+    [app.register_blueprint(bp, url_prefix='/api') for bp in blueprints]

@@ -8,10 +8,9 @@ def test_plan_attributes(plan):
     assert(plan.description)
     assert(hasattr(plan, 'private'))
     assert(hasattr(plan, 'active'))
-    assert(plan.load_index)
-    assert(plan.objective_load)
-    assert(plan.objective_daily_load)
-    assert(isinstance(plan.child_stage_ids, list))
+    assert(hasattr(plan, 'load_index'))
+    assert(plan.total_load)
+    assert(plan.daily_load)
     assert(plan.cron)
     assert(isinstance(plan.start_at, datetime))
     assert(plan.end_at is None or isinstance(plan.end_at, datetime))
@@ -25,8 +24,8 @@ def test_plan_creation(session, user, category, unit):
         user=user, category=category, load_unit=unit,
         title='test plan title',
         description='test plan description',
-        objective_load=10,
-        objective_daily_load=1,
+        total_load=10,
+        daily_load=1,
         cron=None
     )
     session.add(p)

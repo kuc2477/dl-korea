@@ -18,8 +18,8 @@ from ..utils.form import abort_on_validation_fail
 
 
 class BasePlanForm(Form):
-    category = IntegerField('Category', [NumberRange(min=0)])
-    load_unit = IntegerField('Load Unit', [NumberRange(min=0)])
+    category = StringField('Category')
+    load_unit = StringField('Load Unit')
 
     private = BooleanField('Private', [Optional()])
     active = BooleanField('Active', [Optional()])
@@ -44,7 +44,10 @@ class BasePlanForm(Form):
             end_at=form.end_at.data,
         )
         if given and given != expected:
-            raise ValidationError('Inconsistent total load')
+            raise ValidationError(
+                'Inconsistent total load: expected {}, given {}'
+                .format(expected, given)
+            )
 
     def valid_daily_load(form, field):
         given = field.data
@@ -55,7 +58,10 @@ class BasePlanForm(Form):
             end_at=form.end_at.data,
         )
         if given and given != expected:
-            raise ValidationError('Inconsistent daily load')
+            raise ValidationError(
+                'Inconsistent daily load: expected {}, given {}'
+                .format(expected, given)
+            )
 
     def valid_end_at(form, field):
         given = field.data
@@ -66,13 +72,19 @@ class BasePlanForm(Form):
             start_at=form.start_at.data,
         )
         if given and given != expected:
-            raise ValidationError('Inconsistent end at')
+            raise ValidationError(
+                'Inconsistent end: expected {}, given {}'
+                .format(expected, given)
+            )
 
     def valid_cron(form, field):
         try:
             croniter(field.data)
         except ValueError:
-            raise ValidationError('Invalid cron format')
+            raise ValidationError(
+                'Invalid cron format: given {}'
+                .format(field.data)
+            )
 
 
 @abort_on_validation_fail
