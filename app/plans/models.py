@@ -24,6 +24,8 @@ def _count(iterator):
 
 
 class Plan(db.Model):
+    DEFAULT_CRON = '0 0 1 * *'
+
     @declared_attr
     def user_id(cls):
         return Column(Integer, ForeignKey(User.id), nullable=False)
@@ -49,21 +51,64 @@ class Plan(db.Model):
         return relationship(Unit, backref='plans')
 
     def __init__(self, user=None, category=None, load_unit=None,
+                 private=False, active=True,
                  title=None, description=None, cron=None,
-                 private=False, active=True, load_index=0,
-                 objective_load=None, objective_daily_load=None,
-                 child_stage_ids=None):
-        self.user = user
+                 load_index=0, total_load=None, daily_load=None,
+                 start_at=None, end_at=None):
         self.category = category
         self.load_unit = load_unit
-        self.title = title
-        self.description = description
+
         self.private = private
         self.active = active
+
+        self.user = user
+        self.title = title
+        self.description = description
+
         self.load_index = load_index
-        self.objective_load = objective_load
-        self.objective_daily_load = objective_daily_load
-        self.child_stage_ids = child_stage_ids or []
+        self.total_load = total_load
+        self.daily_load = daily_load
+
+        self.cron = cron or self.DEFAULT_CRON
+        self.start_at = start_at or datetime.now()
+        self.end_at = end_at
+
+    @classmethod
+    def from_missing_total_load(
+            cls, daily_load, cron, start_at, end_at, **kwargs):
+        # retrieve total load from free variables
+        total_load = cls.get_total_load_from(
+            daily_load, cron, start_at, end_at
+        )
+        return cls(
+            total_load=total_load, daily_load=daily_load,
+            cron=cron, start_at=start_at, end_at=end_at,
+            **kwargs
+        )
+
+    @classmethod
+    def from_missing_daily_load(
+            cls, total_load, cron, start_at, end_at, **kwargs):
+        # retrieve daily load from free variables
+        daily_load = cls.get_daily_load_from(
+            total_load, cron, start_at, end_at)
+        return cls(
+            total_load=total_load, daily_load=daily_load,
+            cron=cron, start_at=start_at, end_at=end_at,
+            **kwargs
+        )
+
+    @classmethod
+    def from_missing_end(
+            cls, total_load, daily_load, cron, start_at=None, **kwargs):
+        # retrieve end date from free variables
+        start_at = start_at or datetime.now()
+        end_at = cls.get_end_from(total_load, daily_load, cron, start_at)
+        return cls(
+            total_load=total_load, daily_load=daily_load,
+            cron=cron, start_at=start_at, end_at=end_at,
+            **kwargs
+        )
 
     @classmethod
     def _get_datetimes(cls, cron, start_at, end_at):
@@ -72,21 +117,19 @@ class Plan(db.Model):
         return datetimes
 
     @classmethod
-    def _get_objective_load_from(
-            cls, objective_daily_load, cron, start_at, end_at):
+    def get_total_load_from(cls, daily_load, cron, start_at, end_at):
         datetimes = cls._get_datetimes(cron, start_at, end_at)
-        return _count(datetimes) * objective_daily_load
+        return _count(datetimes) * daily_load
 
     @classmethod
-    def _get_objective_daily_load_from(
-            cls, objective_load, cron, start_at, end_at):
+    def get_daily_load_from(cls, total_load, cron, start_at, end_at):
         datetimes = cls._get_datetimes(cron, start_at, end_at)
-        return objective_load / _count(datetimes)
+        return total_load / _count(datetimes)
 
     @classmethod
-    def _get_end_from(cls, objective_load, objective_daily_load, cron):
-        count = (int)(objective_load / objective_daily_load)
-        iterator = croniter(cron, datetime.now())
+    def get_end_from(cls, total_load, daily_load, cron, start_at=None):
+        count = (int)(total_load / daily_load)
+        iterator = croniter(cron, start_at or datetime.now())
         return next(itertools.islice(iterator, count))
 
     def stage(self, titles, loads):
@@ -99,8 +142,8 @@ class Plan(db.Model):
     active = Column(Boolean, nullable=False, default=True)
 
     load_index = Column(Integer, default=0)
-    objective_load = Column(Integer, nullable=False)
-    objective_daily_load = Column(Integer, nullable=False)
+    total_load = Column(Integer, nullable=False)
+    daily_load = Column(Integer, nullable=False)
 
     cron = Column(String, nullable=False)
     start_at = Column(DateTime, default=datetime.now, nullable=False)

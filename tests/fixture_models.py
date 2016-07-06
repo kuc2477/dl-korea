@@ -57,7 +57,7 @@ def plan(request, session, user, category, unit):
         description='test plan description',
         objective_load=10,
         objective_daily_load=1,
-        cron=None
+        cron='0 0 1 * *',
     )
     session.add(p)
     session.commit()
