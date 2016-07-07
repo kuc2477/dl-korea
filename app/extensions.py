@@ -4,6 +4,8 @@ from flask.ext.login import LoginManager
 from flask.ext.mail import Mail
 from flask.ext.admin import Admin
 from flask.ext.marshmallow import Marshmallow
+from wtforms import ValidationError
+from .utils.http import error
 
 
 # app db instance
@@ -48,6 +50,17 @@ def configure_admin(app):
 
 def configure_mail(app):
     mail.init_app(app)
+
+
+def register_error_handlers(app):
+    # handles validation errors raised by decorated forms.
+    # see utils/form.py for further contextual information.
+    @app.errorhandler(ValidationError)
+    def handle_validation_error(e):
+        try:
+            return error(str(e), e.code)
+        except AttributeError:
+            return error(str(e), 400)
 
 
 def register_blueprints(app, *blueprints):

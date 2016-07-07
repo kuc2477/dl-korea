@@ -15,11 +15,13 @@ from croniter import croniter
 from ..categories.models import Category, Unit
 from ..users.models import User
 from ..extensions import db
+from ..exceptions import CronFormatError
+from ..utils.datetime import coerce_datetime as _coerce
 
 
 def _count(iterator):
     counter = itertools.count()
-    deque(itertools.izip(iterator, counter), maxlen=0)
+    deque(zip(iterator, counter), maxlen=0)
     return next(counter)
 
 
@@ -33,7 +35,8 @@ class Plan(db.Model):
     @declared_attr
     def user(cls):
         return relationship(User, backref=backref(
-            'plans', cascade='all, delete-orphan'))
+            'plans', cascade='all, delete-orphan', cascade_backrefs=False
+        ))
 
     @declared_attr
     def category_id(cls):
@@ -42,7 +45,8 @@ class Plan(db.Model):
     @declared_attr
     def category(cls):
         return relationship(Category, backref=backref(
-            'plans', cascade='all, delete-orphan'))
+            'plans', cascade='all, delete-orphan', cascade_backrefs=False
+        ))
 
     @declared_attr
     def load_unit_id(cls):
@@ -51,7 +55,8 @@ class Plan(db.Model):
     @declared_attr
     def load_unit(cls):
         return relationship(Unit, backref=backref(
-            'plans', cascade='all, delete-orphan'))
+            'plans', cascade='all, delete-orphan', cascade_backrefs=False
+        ))
 
     def __init__(self, user=None, category=None, load_unit=None,
                  private=False, active=True,
@@ -73,16 +78,16 @@ class Plan(db.Model):
         self.daily_load = daily_load
 
         self.cron = cron or self.DEFAULT_CRON
-        self.start_at = start_at or datetime.now()
-        self.end_at = end_at
+        self.start_at = _coerce(start_at) or datetime.now()
+        self.end_at = _coerce(end_at)
 
     @classmethod
     def create(cls, **kwargs):
         daily_load = kwargs.pop('daily_load')
         total_load = kwargs.pop('total_load')
         cron = kwargs.pop('cron')
-        start_at = kwargs.pop('start_at')
-        end_at = kwargs.pop('end_at')
+        start_at = _coerce(kwargs.pop('start_at'))
+        end_at = _coerce(kwargs.pop('end_at'))
 
         if not total_load:
             assert(daily_load and cron and start_at and end_at), \
@@ -92,7 +97,7 @@ class Plan(db.Model):
             start_at: {}
             end_at: {}
             '''.format(daily_load, cron, start_at, end_at)
-            return cls.from_missing_total_load(
+            return cls._from_missing_total_load(
                 daily_load=daily_load, cron=cron,
                 start_at=start_at, end_at=end_at,
                 **kwargs
@@ -105,7 +110,7 @@ class Plan(db.Model):
             start_at: {}
             end_at: {}
             '''.format(total_load, cron, start_at, end_at)
-            return cls.from_missing_daily_load(
+            return cls._from_missing_daily_load(
                 total_load=total_load, cron=cron,
                 start_at=start_at, end_at=end_at,
                 **kwargs
@@ -118,13 +123,13 @@ class Plan(db.Model):
             cron: {}
             start_at: {}
             '''.format(total_load, daily_load, cron, start_at)
-            return cls.from_missing_end(
+            return cls._from_missing_end(
                 total_load=total_load, daily_load=daily_load, cron=cron,
                 start_at=start_at, **kwargs
             )
 
     @classmethod
-    def from_missing_total_load(
+    def _from_missing_total_load(
             cls, daily_load, cron, start_at, end_at, **kwargs):
         # retrieve total load from free variables
         total_load = cls.get_total_load_from(
@@ -137,7 +142,7 @@ class Plan(db.Model):
         )
 
     @classmethod
-    def from_missing_daily_load(
+    def _from_missing_daily_load(
             cls, total_load, cron, start_at, end_at, **kwargs):
         # retrieve daily load from free variables
         daily_load = cls.get_daily_load_from(
@@ -149,7 +154,7 @@ class Plan(db.Model):
         )
 
     @classmethod
-    def from_missing_end(
+    def _from_missing_end(
             cls, total_load, daily_load, cron, start_at=None, **kwargs):
         # retrieve end date from free variables
         start_at = start_at or datetime.now()
@@ -162,25 +167,40 @@ class Plan(db.Model):
 
     @classmethod
     def _get_datetimes(cls, cron, start_at, end_at):
-        iterator = croniter(cron, start_at)
-        datetimes = itertools.takewhile(lambda d: d <= end_at, iterator)
-        return datetimes
+        try:
+            iterator = croniter(cron, start_at, ret_type=datetime)
+        except (ValueError, AttributeError):
+            raise CronFormatError(cron)
+        else:
+            datetimes = itertools.takewhile(lambda d: d <= end_at, iterator)
+            return datetimes
 
     @classmethod
     def get_total_load_from(cls, daily_load, cron, start_at, end_at):
-        datetimes = cls._get_datetimes(cron, start_at, end_at)
+        datetimes = cls._get_datetimes(
+            cron, _coerce(start_at), _coerce(end_at)
+        )
         return _count(datetimes) * daily_load
 
     @classmethod
     def get_daily_load_from(cls, total_load, cron, start_at, end_at):
-        datetimes = cls._get_datetimes(cron, start_at, end_at)
+        datetimes = cls._get_datetimes(
+            cron, _coerce(start_at), _coerce(end_at)
+        )
         return total_load / _count(datetimes)
 
     @classmethod
     def get_end_from(cls, total_load, daily_load, cron, start_at=None):
         count = (int)(total_load / daily_load)
-        iterator = croniter(cron, start_at or datetime.now())
-        return next(itertools.islice(iterator, count))
+        try:
+            iterator = croniter(
+                cron, _coerce(start_at) or datetime.now(),
+                ret_type=datetime
+            )
+        except (ValueError, AttributeError):
+            raise CronFormatError(cron)
+        else:
+            return next(itertools.islice(iterator, count))
 
     def update(self, total_load, daily_load, cron, start_at, end_at,
                commit=False):

@@ -11,80 +11,119 @@ from wtforms import (
 from wtforms.validators import (
     NumberRange,
     Length,
-    Optional
+    Optional,
+    DataRequired,
 )
 from .models import Plan
 from ..utils.form import abort_on_validation_fail
+from ..exceptions import CronFormatError
 
 
 class BasePlanForm(Form):
-    category = StringField('Category')
-    load_unit = StringField('Load Unit')
+    category = StringField('Category', [DataRequired()])
+    load_unit = StringField('Load Unit', [DataRequired()])
 
     private = BooleanField('Private', [Optional()])
     active = BooleanField('Active', [Optional()])
 
-    title = StringField('Title', [Length(min=2, max=50)])
-    description = StringField('Description', [Length(min=5, max=500)])
+    title = StringField('Title', [DataRequired(), Length(min=2, max=50)])
+    description = StringField('Description', [
+        DataRequired(), Length(min=5, max=500)
+    ])
+
+    cron = StringField('Cron', [DataRequired()])
+    start_at = DateTimeField('Start at', [DataRequired()])
+    end_at = DateTimeField('End at')
 
     load_index = IntegerField('Load Index', [NumberRange(min=0)])
     total_load = IntegerField('Total Load', [NumberRange(min=0)])
     daily_load = IntegerField('Daily Load', [NumberRange(min=0)])
 
-    cron = StringField('Cron')
-    start_at = DateTimeField('Start at')
-    end_at = DateTimeField('End at')
+    def validate_total_load(form, field):
+        daily_load = form.daily_load.data
+        cron = form.cron.data
+        start_at = form.start_at.data
+        end_at = form.end_at.data
 
-    def valid_total_load(form, field):
-        given = field.data
-        expected = Plan.get_total_load_from(
-            daily_load=form.daily_load.data,
-            cron=form.cron.data,
-            start_at=form.start_at.data,
-            end_at=form.end_at.data,
-        )
-        if given and given != expected:
-            raise ValidationError(
-                'Inconsistent total load: expected {}, given {}'
-                .format(expected, given)
+        # validate only when necessity condition is met.
+        if not (daily_load and cron and start_at and end_at):
+            return
+
+        try:
+            given = field.data
+            expected = Plan.get_total_load_from(
+                daily_load=daily_load, cron=cron,
+                start_at=start_at, end_at=end_at,
             )
+            if given and given != expected:
+                raise ValidationError(
+                    'Inconsistent total load: expected {}, given {}'
+                    .format(expected, given)
+                )
+        # validate only the field that the validator is responsible of.
+        except CronFormatError:
+            pass
 
-    def valid_daily_load(form, field):
-        given = field.data
-        expected = Plan.get_daily_load_from(
-            total_load=form.total_load.data,
-            cron=form.cron.data,
-            start_at=form.start_at.data,
-            end_at=form.end_at.data,
-        )
-        if given and given != expected:
-            raise ValidationError(
-                'Inconsistent daily load: expected {}, given {}'
-                .format(expected, given)
+    def validate_daily_load(form, field):
+        total_load = form.total_load.data,
+        cron = form.cron.data,
+        start_at = form.start_at.data
+        end_at = form.end_at.data
+
+        # validate only when necessity condition is met.
+        if not (total_load and cron and start_at and end_at):
+            return
+
+        try:
+            given = field.data
+            expected = Plan.get_daily_load_from(
+                total_load=total_load, cron=cron,
+                start_at=start_at, end_at=end_at,
             )
+            if given and given != expected:
+                raise ValidationError(
+                    'Inconsistent daily load: expected {}, given {}'
+                    .format(expected, given)
+                )
+        # validate only the field that the validator is responsible of.
+        except CronFormatError:
+            pass
 
-    def valid_end_at(form, field):
-        given = field.data
-        expected = Plan.get_end_from(
-            total_load=form.total_load.data,
-            daily_load=form.daily_load.data,
-            cron=form.cron.data,
-            start_at=form.start_at.data,
-        )
-        if given and given != expected:
-            raise ValidationError(
-                'Inconsistent end: expected {}, given {}'
-                .format(expected, given)
-            )
-
-    def valid_cron(form, field):
+    def validate_cron(form, field):
         try:
             croniter(field.data)
-        except ValueError:
+        except (ValueError, AttributeError):
             raise ValidationError(
                 'Invalid cron format: given {}'
                 .format(field.data)
             )
+
+    def validate_end_at(form, field):
+        total_load = form.total_load.data
+        daily_load = form.daily_load.data
+        cron = form.cron.data
+        start_at = form.start_at.data
+
+        # validate only when necessity condition is met.
+        if not (total_load and daily_load and cron and start_at):
+            return
+
+        try:
+            given = field.data
+            expected = Plan.get_end_from(
+                total_load=total_load,
+                daily_load=daily_load,
+                cron=cron, start_at=start_at
+            )
+
+            if given and given != expected:
+                raise ValidationError(
+                    'Inconsistent end: expected {}, given {}'
+                    .format(expected, given)
+                )
+        # validate only the field that the validator is responsible of.
+        except CronFormatError:
+            pass
 
 
 @abort_on_validation_fail
@@ -92,20 +131,21 @@ class PlanCreationForm(BasePlanForm):
     titles = FieldList(StringField('Stage Title', [Length(min=2, max=50)]))
     loads = FieldList(IntegerField('Stage Load', [NumberRange(min=0)]))
 
-    def valid_titles(form, field):
-        if len(form.loads.data) != len(field.data):
+    def validate_titles(form, field):
+        if (form.loads.data or field.data) and \
+                len(form.loads.data) != len(field.data):
             raise ValidationError(
                 'Length of titles and loads of plan stages' +
                 'should be equal')
 
-    def valid_loads(form, field):
-        if len(form.titles.data) != len(field.data):
+    def validate_loads(form, field):
+        if (form.titles.data or field.data) and \
+                len(form.titles.data) != len(field.data):
             raise ValidationError(
                 'Length of titles and loads of plan stages' +
                 'should be equal')
 
 
-@abort_on_validation_fail
 class PlanUpdateForm(BasePlanForm):
     pass
 
@@ -116,11 +156,9 @@ class BaseStageForm(Form):
     load = IntegerField('Load', [NumberRange(min=0)])
 
 
-@abort_on_validation_fail
 class StageCreationForm(BaseStageForm):
     pass
 
 
-@abort_on_validation_fail
 class StageUpdateForm(BaseStageForm):
     pass

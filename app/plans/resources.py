@@ -89,6 +89,7 @@ class PlanResource(Resource):
             end_at=form.end_at.data,
         )
         db.session.commit()
+        return '', 200
 
 
 class PlanListResource(PaginatedResource):
@@ -129,4 +130,4 @@ class PlanListResource(PaginatedResource):
         db.session.add(plan)
         db.session.add_all(stages)
         db.session.commit()
-        return serialize(plan)
+        return serialize(plan, PlanSchema)

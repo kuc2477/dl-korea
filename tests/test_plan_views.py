@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from datetime import timedelta
 from .utils import authenticate
+from app.plans.models import Plan
 
 
 class TestPlanListResource:
@@ -46,6 +47,7 @@ class TestPlanListResource:
             'description': 'test description',
             'load_index': 0,
             'total_load': 200,
+            'cron': Plan.DEFAULT_CRON,
             'start_at': str(datetime.now()),
             'end_at': str(datetime.now() + timedelta(days=180)),
         }
@@ -72,6 +74,7 @@ class TestPlanListResource:
             'description': 'test description',
             'load_index': 0,
             'daily_load': 5,
+            'cron': Plan.DEFAULT_CRON,
             'start_at': str(datetime.now()),
             'end_at': str(datetime.now() + timedelta(days=180)),
         }
@@ -98,6 +101,7 @@ class TestPlanListResource:
             'description': 'test description',
             'load_index': 0,
             'daily_load': 5,
+            'cron': Plan.DEFAULT_CRON,
             'start_at': str(datetime.now()),
             'end_at': str(datetime.now() + timedelta(days=180)),
         }
@@ -109,8 +113,9 @@ class TestPlanListResource:
         data = json.loads(res.data.decode('utf-8'))
 
         assert(res.status_code == 200), res.data.decode('utf-8')
-        for k, v in data.items():
-            assert(payload[k] == v)
+        for k, v in payload.items():
+            if k not in ['titles', 'loads', 'start_at', 'end_at']:
+                assert(data[k] == v)
 
     def test_post_with_stages(self, session, client, user, category, unit):
         authenticate(client, user)
@@ -124,6 +129,7 @@ class TestPlanListResource:
             'load_index': 0,
             'total_load': 200,
             'daily_load': 3,
+            'cron': Plan.DEFAULT_CRON,
             'start_at': str(datetime.now()),
             'titles': ['test stage title0', 'test stage title1'],
             'loads': [1, 3],
@@ -136,11 +142,9 @@ class TestPlanListResource:
         data = json.loads(res.data.decode('utf-8'))
 
         assert(res.status_code == 200), res.data.decode('utf-8')
-        for k, v in data.items():
-            if k in ['titles', 'loads']:
-                continue
-            else:
-                assert(payload[k] == v)
+        for k, v in payload.items():
+            if k not in ['titles', 'loads', 'start_at', 'end_at']:
+                assert(data[k] == v)
 
 
 class PlanResourceTest:

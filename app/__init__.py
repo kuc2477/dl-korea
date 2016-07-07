@@ -8,6 +8,7 @@ from .extensions import (
     configure_mail,
     configure_login,
     register_blueprints,
+    register_error_handlers,
 )
 from .users.views import bp as users_bp
 from .plans.views import bp as plans_bp
@@ -35,8 +36,9 @@ def create_app(cfg):
     if config.ADMIN:
         configure_admin(app)
 
-    # register blueprints
+    # register blueprints and error handlers
     register_blueprints(app, users_bp, plans_bp)
+    register_error_handlers(app)
     return app
 
 
