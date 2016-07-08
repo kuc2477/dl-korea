@@ -82,4 +82,4 @@ class RequiredIfNot(RequiredIf):
 
         # run validation conditionally
         if condition_ok:
-            super(RequiredIfNot, self).__call__(form, field)
+            super(RequiredIf, self).__call__(form, field)
