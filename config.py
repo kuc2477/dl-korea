@@ -14,8 +14,8 @@ from secret import (
 
 
 class Base(object):
-    PROJECT_NAME = 'anchor-backend'
-    SERVICE_NAME = 'Anchor'
+    PROJECT_NAME = 'devit'
+    SERVICE_NAME = 'Devit'
 
     # Server Modes
     ADMIN = False

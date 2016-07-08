@@ -15,7 +15,7 @@ from wtforms.validators import (
     DataRequired,
 )
 from .models import Plan
-from ..utils.form import abort_on_validation_fail
+from ..utils.form import abort_on_validation_fail, RequiredIfNot
 from ..exceptions import CronFormatError
 
 
@@ -33,11 +33,19 @@ class BasePlanForm(Form):
 
     cron = StringField('Cron', [DataRequired()])
     start_at = DateTimeField('Start at', [DataRequired()])
-    end_at = DateTimeField('End at')
+    end_at = DateTimeField('End at', [
+        RequiredIfNot(['total_load', 'daily_load'], use_and=False), Optional(),
+    ])
 
     load_index = IntegerField('Load Index', [NumberRange(min=0)])
-    total_load = IntegerField('Total Load', [NumberRange(min=0)])
-    daily_load = IntegerField('Daily Load', [NumberRange(min=0)])
+    total_load = IntegerField('Total Load', [
+        RequiredIfNot(['daily_load', 'end_at'], use_and=False), Optional(),
+        NumberRange(min=0)
+    ])
+    daily_load = IntegerField('Daily Load', [
+        RequiredIfNot(['total_load', 'end_at'], use_and=False), Optional(),
+        NumberRange(min=0)
+    ])
 
     def validate_total_load(form, field):
         daily_load = form.daily_load.data

@@ -3,6 +3,7 @@ from functools import (
     wraps,
     partial
 )
+from wtforms.validators import Required
 from wtforms import ValidationError
 from flask.ext.restful import abort
 
@@ -33,3 +34,52 @@ def abort_on_validation_fail(form_cls=None, code=400, detail=True):
 
     form_cls.validate = wrapper
     return form_cls
+
+
+class RequiredIf(Required):
+    def __init__(self, other_field_names, use_and=True, *args, **kwargs):
+        self.use_and = use_and
+        self.other_field_names = other_field_names
+        super(RequiredIf, self).__init__(*args, **kwargs)
+
+    def __call__(self, form, field):
+        condition_op = self._get_condition_op()
+        condition_ok = condition_op([
+            bool(field.data) for name, field in self._get_other_fields(form)
+        ])
+
+        # run validation conditionally
+        if condition_ok:
+            super(RequiredIf, self).__call__(form, field)
+
+    def _get_condition_op(self):
+        return all if self.use_and else any
+
+    def _get_other_fields(self, form):
+        # coerce given field name parameter into a list
+        try:
+            other_fields = [(n, form._fields.get(n)) for n in
+                            self.other_field_names]
+        except TypeError:
+            other_fields = [(self.other_field_names,
+                             form._fields.get(self.other_field_names))]
+
+        # check field existence
+        for name, field in other_fields:
+            if field is None:
+                raise ValueError('Field name {} not found'.format(name))
+
+        return other_fields
+
+
+class RequiredIfNot(RequiredIf):
+    def __call__(self, form, field):
+        condition_op = self._get_condition_op()
+        condition_ok = condition_op([
+            not bool(field.data) for name, field in
+            self._get_other_fields(form)
+        ])
+
+        # run validation conditionally
+        if condition_ok:
+            super(RequiredIfNot, self).__call__(form, field)
