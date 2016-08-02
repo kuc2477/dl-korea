@@ -85,7 +85,7 @@ def signup():
 
 @bp.route('/resend', methods=['POST'])
 def resend():
-    user = get_user_or_404(request.form['email'])
+    user = get_user_or_404(request.json['email'])
 
     if not user.confirmed:
         send_confirmation_mail(user)

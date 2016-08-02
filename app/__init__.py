@@ -1,6 +1,7 @@
 import os
 import config
 from flask import Flask
+from flask_cors import CORS
 from .extensions import (
     configure_db,
     configure_ma,
@@ -35,6 +36,9 @@ def create_app(cfg):
 
     if config.ADMIN:
         configure_admin(app)
+
+    if config.DEBUG:
+        CORS(app)
 
     # register blueprints and error handlers
     register_blueprints(app, users_bp, plans_bp)
