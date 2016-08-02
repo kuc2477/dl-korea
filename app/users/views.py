@@ -49,9 +49,11 @@ def login():
 
     if login_user(user):
         session_key = encode_cookie(str(session.get('user_id')))
-        return jsonify({'user': user.serialized, 'session_key': session_key})
+        response = jsonify({'user': user.serialized})
+        response.set_cookie('session_id', session_id)
+        return response
     else:
-        return error('User account has not been confirmed yet',
+        return error('User account has not been confirmed yet', 
                      401, email=user.email)
 
 
