@@ -48,9 +48,9 @@ def login():
         abort(401)
 
     if login_user(user):
-        session_key = encode_cookie(str(session.get('user_id')))
+        # session_id = encode_cookie(str(session.get('user_id')))
+        # response.set_cookie('session_id', session_id)
         response = jsonify({'user': user.serialized})
-        response.set_cookie('session_id', session_id)
         return response
     else:
         return error('User account has not been confirmed yet', 
@@ -59,7 +59,7 @@ def login():
 
 @bp.route('/logout', methods=['POST'])
 def logout():
-    serialized = current_user.serialized
+    serialized = None if current_user.is_anonymous else current_user.serialized
     logout_user()
     return jsonify({'user': serialized})
 

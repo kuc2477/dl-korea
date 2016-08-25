@@ -49,6 +49,7 @@ export function parseJson(response) {
 export function validate(response) {
   if (response.status < 200 && response.status >= 300) {
     let error = new Error(response.statusText)
+    debugger;
     error.response = response
     throw error
   } 

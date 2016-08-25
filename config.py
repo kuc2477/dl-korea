@@ -20,7 +20,7 @@ class Base(object):
     # Server Modes
     ADMIN = False
     DEBUG = False
-    TESTING = False
+    TEST = False
 
     # Database
     SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -52,7 +52,7 @@ class Dev(Base):
 
 class Test(Base):
     # Mode
-    TESTING = True
+    TEST = True
 
     # Database
     SQLALCHEMY_ECHO = False

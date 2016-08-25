@@ -64,4 +64,8 @@ def register_error_handlers(app):
 
 
 def register_blueprints(app, *blueprints):
+    [app.register_blueprint(bp) for bp in blueprints]
+
+
+def register_api_blueprints(app, *blueprints):
     [app.register_blueprint(bp, url_prefix='/api') for bp in blueprints]

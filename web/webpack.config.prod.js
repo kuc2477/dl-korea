@@ -11,6 +11,7 @@ config.devtool = 'source-map'
 config.entry = './app/app.js'
 
 // configure publicpath & module transformers
+config.output.path = path.join(__dirname, '../static/build')
 config.output.publicPath = './'
 config.module.loaders.push({
   // module level css
