@@ -1,0 +1,2 @@
+export const TOAST_LENGTH_SHORT = 1500
+export const TOAST_LENGTH_LONG = 3000
