@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'material-ui/Tabs'
 
 import { INDICATOR } from '../../constants/colors'
 import { UserPropType } from '../../constants/types'
-import { PLANS, LOGOUT } from '../../constants/routes'
+import { PLANS, TALKS, PROFILE, LOGOUT } from '../../constants/routes'
 import { logout } from '../../actions/auth'
 
 
@@ -41,7 +41,7 @@ export default class Nav extends React.Component {
     }
   }
 
-  static ROUTES = [[PLANS, LOGOUT]];
+  static ROUTES = [[PLANS, TALKS, ], [PROFILE, LOGOUT,]];
   static APP_BAR_STYLE = { position: 'fixed' };
   static TAB_INK_STYLE = { color: INDICATOR };
   static TAB_ITEM_STYLE = { marginRight: 120 };

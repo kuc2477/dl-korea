@@ -12,6 +12,22 @@ export const PLANS = {
   onlyVisibleToAuthenticated: true
 }
 
+export const TALKS = {
+  component: Plans,
+  path: 'talks',
+  label: 'TALKS',
+  loginRequired: true,
+  onlyVisibleToAuthenticated: true
+}
+
+export const PROFILE = {
+  component: Plans,
+  path: 'profile',
+  label: 'PROFILE',
+  loginRequired: true,
+  onlyVisibleToAuthenticated: true,
+}
+
 export const LOGIN = {
   component: Login,
   path: 'login',
