@@ -10,7 +10,7 @@ class RequestMiddleware {
     this.options = options || {}
   }
 
-  withCookie() {
+  authenticated() {
     const updated = Object.assign({}, this.options, {
       credentials: 'include',
     })
