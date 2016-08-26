@@ -40,7 +40,8 @@ def create_app(cfg):
         configure_admin(app)
 
     if config.DEBUG:
-        CORS(app)
+        pass
+        # CORS(app)
 
     # register blueprints and error handlers
     register_blueprints(app, main_bp)

@@ -10,10 +10,9 @@ class RequestMiddleware {
     this.options = options || {}
   }
 
-  authenticated() {
+  withCookie() {
     const updated = Object.assign({}, this.options, {
-      credentials: process.env.NODE_ENV === 'development' ? 
-      'include' : 'same-origin'
+      credentials: 'include',
     })
     return new RequestMiddleware(updated)
   }
@@ -49,7 +48,6 @@ export function parseJson(response) {
 export function validate(response) {
   if (response.status < 200 && response.status >= 300) {
     let error = new Error(response.statusText)
-    debugger;
     error.response = response
     throw error
   } 

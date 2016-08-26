@@ -48,8 +48,6 @@ def login():
         abort(401)
 
     if login_user(user):
-        # session_id = encode_cookie(str(session.get('user_id')))
-        # response.set_cookie('session_id', session_id)
         response = jsonify({'user': user.serialized})
         return response
     else:

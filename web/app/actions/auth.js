@@ -27,8 +27,11 @@ export function authError(reason = 'Something went wrong', email = null) {
 export function authenticate(email, password, router, next = PLANS.path) {
   return (dispatch) => {
     dispatch(authStart())
-
-    fetch(urls.login(), m.postJson({ email, password }).value())
+    fetch(
+      urls.login(), m
+      .authenticated()
+      .postJson({ email, password })
+      .value())
       .then(validate)
       .then(parseJson)
       .then(data => {
