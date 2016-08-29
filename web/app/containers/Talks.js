@@ -7,7 +7,7 @@ class Talks extends React.Component {
   render() {
     return (
       <div>
-      TALKS NOT IMPLEMENTED YET
+        TALKS NOT IMPLEMENTED YET
       </div>
     )
   }

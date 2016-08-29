@@ -1,4 +1,13 @@
-/* autocompletion input background reset */
+// fill screen
+html, body, #root {
+  height: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+
+// autocompletion input background reset
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px white inset;
 }

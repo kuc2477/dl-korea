@@ -103,7 +103,7 @@ export function initUser(replace, callback) {
       .then(validate)
       .then(parseJson)
       .then(json => {
-        dispatch(userInitSuccess(response.body.user))
+        dispatch(userInitSuccess(json.user))
         callback()
       }).catch(error => {
           // There's 2 possible reason of failing user initialization.

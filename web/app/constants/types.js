@@ -29,3 +29,19 @@ export const UserPropType = ImmutablePropTypes.contains({
   lastname: PropTypes.string,
 })
 
+export const PlanPropType = ImmutablePropTypes.contains({
+  id: PropTypes.number,
+  category: PropTypes.string,
+  loadUnit: PropTypes.string,
+  private: PropTypes.bool,
+  active: PropTypes.bool,
+  user: PropTypes.number,
+  title: PropTypes.string,
+  description: PropTypes.string,
+  loadIndex: PropTypes.number,
+  totalLoad: PropTypes.number,
+  dailyLoad: PropTypes.number,
+  cron: PropTypes.string,
+  startAt: PropTypes.string,
+  endAt: PropTypes.string,
+})

@@ -1,4 +1,6 @@
 import Plans from '../containers/Plans'
+import Talks from '../containers/Talks'
+import Profile from '../containers/Profile'
 import Login from '../containers/Login'
 import Signup from '../containers/Signup'
 import urls from '../modules/urls'
@@ -13,7 +15,7 @@ export const PLANS = {
 }
 
 export const TALKS = {
-  component: Plans,
+  component: Talks,
   path: 'talks',
   label: 'TALKS',
   loginRequired: true,
@@ -21,7 +23,7 @@ export const TALKS = {
 }
 
 export const PROFILE = {
-  component: Plans,
+  component: Profile,
   path: 'profile',
   label: 'PROFILE',
   loginRequired: true,

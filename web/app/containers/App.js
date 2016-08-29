@@ -44,7 +44,9 @@ class App extends React.Component {
       <MuiThemeProvider>
         <div>
           <Nav user={this.props.user} dispatch={this.props.dispatch} />
-          <div style={this.constructor.STYLE}>{this.props.children}</div>
+          <div style={this.constructor.STYLE}>
+            {this.props.children}
+          </div>
           <Snackbar
             open={this.props.toastOpen}
             action={this.props.toastAction}
