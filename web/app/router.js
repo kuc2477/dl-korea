@@ -1,7 +1,14 @@
 import React from 'react'
 import { Router, Route, IndexRedirect } from 'react-router'
 
-import { PLANS, TALKS, LOGIN, SIGNUP, PROFILE, } from './constants/routes'
+import { 
+  PLANS, 
+  PLAN_CREATION, 
+  TALKS, 
+  LOGIN, 
+  SIGNUP, 
+  PROFILE, 
+} from './constants/routes'
 import history from './modules/history'
 import { authRequired } from './modules/routing'
 import App from './containers/App'
@@ -12,6 +19,7 @@ export const router = (
     <Route path="/" component={App}>
       <IndexRedirect to={PLANS.path} />
       <Route path={PLANS.path} component={PLANS.component} onEnter={authRequired} />
+      <Route path={PLAN_CREATION.path} component={PLAN_CREATION.component} onEnter={authRequired} />
       <Route path={TALKS.path} component={TALKS.component} onEnter={authRequired} />
       <Route path={LOGIN.path} component={LOGIN.component} />
       <Route path={SIGNUP.path} component={SIGNUP.component} />

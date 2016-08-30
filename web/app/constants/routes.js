@@ -1,4 +1,5 @@
 import Plans from '../containers/Plans'
+import PlanCreation from '../containers/PlanCreation'
 import Talks from '../containers/Talks'
 import Profile from '../containers/Profile'
 import Login from '../containers/Login'
@@ -11,7 +12,15 @@ export const PLANS = {
   path: 'plans',
   label: 'PLANS',
   loginRequired: true,
-  onlyVisibleToAuthenticated: true
+  onlyVisibleToAuthenticated: true,
+}
+
+export const PLAN_CREATION = {
+  component: PlanCreation,
+  path: `${PLANS.path}/creation`,
+  label: 'CREATE NEW PLAN',
+  loginRequired: true,
+  onlyVisibleToAuthenticated: true,
 }
 
 export const TALKS = {
@@ -52,4 +61,12 @@ export const SIGNUP = {
 }
 
 
-export default { PLANS, LOGIN, LOGOUT, SIGNUP }
+export default { 
+  PLANS, 
+  PLAN_CREATION,
+  TALKS,
+  PROFILE,
+  LOGIN, 
+  LOGOUT, 
+  SIGNUP 
+}

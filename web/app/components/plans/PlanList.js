@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Immutable from 'immutable'
 import ImmutablePropTypes from 'react-immutable-proptypes'
@@ -7,10 +8,16 @@ import FloatingActionButton from 'material-ui/FloatingActionButton'
 import { CardTitle } from 'material-ui/Card'
 import { List } from 'material-ui/List'
 import { PlanItem } from './PlanItem'
+import { PLAN_CREATION } from '../../constants/routes'
 import { PlanPropType } from '../../constants/types'
+import { PLANS_CREATION } from '../../constants/strings'
 
 
 export default class PlanList extends React.Component {
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  };
+
   static propTypes = {
     plans: ImmutablePropTypes.listOf(PropTypes.number),
     plansById: ImmutablePropTypes.contains(PlanPropType),
@@ -21,9 +28,7 @@ export default class PlanList extends React.Component {
     plansById: Immutable.Map(),
   };
 
-  static LIST_STYLE = {
-    height: 100
-  };
+  static LIST_STYLE = {};
   static FAB_STYLE = {
     position: 'fixed',
     bottom: 100,
@@ -36,6 +41,10 @@ export default class PlanList extends React.Component {
   _getSubtitle() {
     const { plans } = this.props
     return `Total ${plans.size} plans registered`
+  }
+
+  routeToCreation() {
+    this.context.router.push(PLAN_CREATION.path)
   }
 
   render() {
@@ -55,7 +64,11 @@ export default class PlanList extends React.Component {
         </List>
 
         <div className="row end-md">
-          <FloatingActionButton style={FAB_STYLE} secondary={true}>
+          <FloatingActionButton 
+            secondary
+            style={FAB_STYLE} 
+            onClick={::this.routeToCreation}
+          >
             <ContentAdd />
           </FloatingActionButton>
         </div>

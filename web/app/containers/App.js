@@ -43,7 +43,11 @@ class App extends React.Component {
     return (
       <MuiThemeProvider>
         <div>
-          <Nav user={this.props.user} dispatch={this.props.dispatch} />
+          <Nav 
+            location={this.props.location} 
+            user={this.props.user} 
+            dispatch={this.props.dispatch} 
+          />
           <div style={this.constructor.STYLE}>
             {this.props.children}
           </div>

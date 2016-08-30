@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 
 import router from './router'
 import store from './store'
+import DevTools from './components/dev/DevTools'
 
 
 // inject tap event plugin
@@ -14,7 +15,10 @@ injectTapEventPlugin()
 document.addEventListener('DOMContentLoaded', () => {
   render(
     <Provider store={store} >
-      {router}
+      <div className="full-height">
+        {router}
+        <DevTools />
+      </div>
     </Provider>,
     document.getElementById('root')
   )

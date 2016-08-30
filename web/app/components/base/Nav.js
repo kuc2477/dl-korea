@@ -1,9 +1,7 @@
 import _ from 'lodash'
-
 import React, { PropTypes } from 'react'
 import AppBar from 'material-ui/AppBar'
 import { Tabs, Tab } from 'material-ui/Tabs'
-
 import { INDICATOR } from '../../constants/colors'
 import { UserPropType } from '../../constants/types'
 import { PLANS, TALKS, PROFILE, LOGOUT } from '../../constants/routes'
@@ -15,7 +13,8 @@ export default class Nav extends React.Component {
     user: UserPropType,
     title: PropTypes.string.isRequired,
     // need dispatcher to dispatch logout action
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired
   };
 
   static contextTypes = {
@@ -69,15 +68,19 @@ export default class Nav extends React.Component {
   }
 
   _getSelectedIndex() {
+    const location = this.props.location
     const router = this.context.router
     const routes = this._getTabRoutes()
     return _.findIndex(
-      routes, route => route.path && router.isActive(route.path)
-    )
+      routes, route => route.path && (
+        router.isActive(route.path) || 
+        _.startsWith(location.pathname, route.path)
+    ))
   }
 
 
   render() {
+    console.log(this.props)
     const tabItems = this._getTabRoutes().map(
       (route, index) =>
       <Tab

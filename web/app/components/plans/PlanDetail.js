@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import CardTitle from 'material-ui/Card/CardTitle'
-import PlanDashboard from './PlanDashboard'
+import PlanStatistics from './PlanStatistics'
 import PlanForm from './PlanForm'
 
 
@@ -32,7 +32,7 @@ export default class PlanDetail extends React.Component {
     return (
       <div>
         <CardTitle title={title} subtitle={subtitle} />
-        <PlanDashboard />
+        <PlanStatistics />
         <PlanForm />
       </div>
     )

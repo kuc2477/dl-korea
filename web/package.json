@@ -54,6 +54,7 @@
   },
   "homepage": "https://github.com/kuc2477/devit-web#readme",
   "dependencies": {
+    "chart.js": "^2.2.2",
     "es6-promise": "^3.2.1",
     "flexboxgrid": "^6.3.0",
     "font-awesome": "^4.6.3",
@@ -77,7 +78,7 @@
     "react-redux": "^4.4.5",
     "react-router": "^2.5.1",
     "react-slick": "^0.12.2",
-    "react-swipeable-views": "^0.6.3",
+    "react-swipeable-views": "^0.7.2",
     "react-tap-event-plugin": "^1.0.0",
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",
