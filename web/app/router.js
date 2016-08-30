@@ -4,7 +4,6 @@ import { Router, Route, IndexRedirect } from 'react-router'
 import { 
   PLANS, 
   PLAN_CREATION, 
-  TALKS, 
   LOGIN, 
   SIGNUP, 
   PROFILE, 
@@ -20,7 +19,6 @@ export const router = (
       <IndexRedirect to={PLANS.path} />
       <Route path={PLANS.path} component={PLANS.component} onEnter={authRequired} />
       <Route path={PLAN_CREATION.path} component={PLAN_CREATION.component} onEnter={authRequired} />
-      <Route path={TALKS.path} component={TALKS.component} onEnter={authRequired} />
       <Route path={LOGIN.path} component={LOGIN.component} />
       <Route path={SIGNUP.path} component={SIGNUP.component} />
       <Route path={PROFILE.path} component={PROFILE.component} onEnter={authRequired} />

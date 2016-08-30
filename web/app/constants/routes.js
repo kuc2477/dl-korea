@@ -1,6 +1,5 @@
 import Plans from '../containers/Plans'
 import PlanCreation from '../containers/PlanCreation'
-import Talks from '../containers/Talks'
 import Profile from '../containers/Profile'
 import Login from '../containers/Login'
 import Signup from '../containers/Signup'
@@ -21,14 +20,6 @@ export const PLAN_CREATION = {
   label: 'CREATE NEW PLAN',
   loginRequired: true,
   onlyVisibleToAuthenticated: true,
-}
-
-export const TALKS = {
-  component: Talks,
-  path: 'talks',
-  label: 'TALKS',
-  loginRequired: true,
-  onlyVisibleToAuthenticated: true
 }
 
 export const PROFILE = {
@@ -64,7 +55,6 @@ export const SIGNUP = {
 export default { 
   PLANS, 
   PLAN_CREATION,
-  TALKS,
   PROFILE,
   LOGIN, 
   LOGOUT, 

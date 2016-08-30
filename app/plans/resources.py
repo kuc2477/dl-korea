@@ -46,6 +46,7 @@ def _get_load_unit_or_404(category, name):
 class PlanSchema(ma.ModelSchema):
     category = fields.Function(lambda obj: obj.category.name)
     load_unit = fields.Function(lambda obj: obj.load_unit.name)
+    stages = fields.Function(lambda obj: serialize(obj.stages))
 
     class Meta:
         model = Plan
