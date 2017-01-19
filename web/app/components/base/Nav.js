@@ -4,7 +4,7 @@ import AppBar from 'material-ui/AppBar'
 import { Tabs, Tab } from 'material-ui/Tabs'
 import { INDICATOR } from '../../constants/colors'
 import { UserPropType } from '../../constants/types'
-import { PLANS, PROFILE, LOGOUT } from '../../constants/routes'
+import { POSTS, PROFILE, LOGIN, LOGOUT } from '../../constants/routes'
 import { logout } from '../../actions/auth'
 
 
@@ -22,7 +22,7 @@ export default class Nav extends React.Component {
   };
 
   static defaultProps = {
-    title: 'Devit'
+    title: 'Deep Learning Korea'
   };
 
   constructor(props) {
@@ -40,14 +40,15 @@ export default class Nav extends React.Component {
     }
   }
 
-  static ROUTES = [[PLANS, ], [PROFILE, LOGOUT,]];
+  static ROUTES = [[LOGIN], [PROFILE, LOGOUT,]];
   static APP_BAR_STYLE = { position: 'fixed' };
   static TAB_INK_STYLE = { color: INDICATOR };
   static TAB_ITEM_STYLE = { marginRight: 120 };
 
   _onTabActive(tab) {
     // run logout action if activated tab is logout tab
-    if (tab.props.label === LOGOUT.label) {
+    if (tab.props.label === LOGOUT.label ||
+      tab.props.label === LOGIN.label) {
       const { dispatch } = this.props
       dispatch(logout(this.context.router))
       return
@@ -105,10 +106,12 @@ export default class Nav extends React.Component {
     const icon = (
       <i
         style={{ margin: 8, color: 'white' }}
-        className="fa fa-2x fa-anchor"
+        className="fa fa-2x fa-braille clickable"
       >
       </i>
     )
+
+    const goHome = () => {this.context.router.push('/')}
 
     return (
       <AppBar
@@ -117,6 +120,9 @@ export default class Nav extends React.Component {
         title={this.props.title}
         iconElementLeft={icon}
         iconElementRight={tabs}
+        onLeftIconButtonTouchTap={goHome}
+        onTitleTouchTap={goHome}
+        titleStyle={{cursor: 'pointer'}}
       />
     )
   }

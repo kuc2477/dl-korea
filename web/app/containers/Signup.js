@@ -68,10 +68,8 @@ class Signup extends React.Component {
     marginBottom: 0
   };
 
-  static TITLE = 'Manage your self development journey';
-  static SUBTITLE =
-    'Keep yourself motivated and share your experience ' +
-    'with your friends';
+  static TITLE = '딥러닝에 대해 이야기 해보세요';
+  static SUBTITLE = '인상깊게 읽은 논문을 공유하고, 통찰을 커뮤니티와 함께 나누세요'
 
   static FORM_CONSTRAINT = {
     email: {

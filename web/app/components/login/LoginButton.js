@@ -12,7 +12,7 @@ export default class LoginButton extends React.Component {
     primary: true,
   };
 
-  static LABEL = 'Login to Anchor';
+  static LABEL = 'Deep Learning Korea 로그인';
 
   render() {
     const { isAuthenticating, ...restProps } = this.props

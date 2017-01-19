@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react'
 
 
-export default class Basic extends React.Component {
+class Write extends React.Component {
   render() {
     return (
       <div>
-        BASIC NOT IMPLEMENTED YET
+        NOT IMPLEMENTED YET
       </div>
     )
   }

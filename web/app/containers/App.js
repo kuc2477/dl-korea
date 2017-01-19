@@ -10,6 +10,7 @@ import { clearToast } from '../actions/base'
 
 import '../styles/generics/app.scss'
 import '../styles/generics/vendor.css'
+import '../styles/modules/clickable.scss'
 
 
 class App extends React.Component {
@@ -42,13 +43,13 @@ class App extends React.Component {
   render() {
     return (
       <MuiThemeProvider>
-        <div>
+        <div className="full-height">
           <Nav 
             location={this.props.location} 
             user={this.props.user} 
             dispatch={this.props.dispatch} 
           />
-          <div style={this.constructor.STYLE}>
+          <div className="full-height" style={this.constructor.STYLE}>
             {this.props.children}
           </div>
           <Snackbar

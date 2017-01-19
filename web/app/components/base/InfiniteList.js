@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import Infinite from 'react-infinite'
-import RefreshIndicator from 'material-ui/lib/refresh-indicator'
+import RefreshIndicator from 'material-ui/RefreshIndicator'
 
 import { WINDOW_WIDTH } from '../../constants/numbers'
 
@@ -46,6 +46,7 @@ export default class InfiniteList extends React.Component {
       latestContentExists,
       isInfiniteLoading,
       children,
+      style,
       ...rest
     } = this.props
 
@@ -56,7 +57,7 @@ export default class InfiniteList extends React.Component {
       this._getLoadingIndicator() : null
 
     return (
-      <div>
+      <div style={style}>
         {latestContentIndicator}
         {loadingIndicator}
         <Infinite {...rest}>

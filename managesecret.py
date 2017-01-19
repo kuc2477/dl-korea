@@ -10,7 +10,7 @@ try:
 except NameError:
     pass
 
-DEFAULT_DB_NAME = 'devit'
+DEFAULT_DB_NAME = 'dl-korea'
 DEFAULT_DB_USERNAME = 'postgres'
 DEFAULT_MAIL_SERVER = 'smtp.gmail.com'
 DEFAULT_DB_ENDPOINT = 'localhost'

@@ -1,7 +1,7 @@
 import { colors } from 'material-ui/styles'
 
 export const BRAND_FB = '#3b5998'
-export const BRAND_GOOGLE = '#F90101'
+export const BRAND_GOOGLE = '#d62d20'
 
 export const INACTIVE = 'rgba(0, 0, 0, 0.54)'
 export const PRIMARY = colors.pink500

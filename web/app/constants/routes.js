@@ -1,23 +1,32 @@
-import Plans from '../containers/Plans'
-import PlanCreation from '../containers/PlanCreation'
+import Posts from '../containers/Posts'
+import Post from '../containers/Post'
+import Write from '../containers/Write'
 import Profile from '../containers/Profile'
 import Login from '../containers/Login'
 import Signup from '../containers/Signup'
 import urls from '../modules/urls'
 
 
-export const PLANS = {
-  component: Plans,
-  path: 'plans',
-  label: 'PLANS',
-  loginRequired: true,
-  onlyVisibleToAuthenticated: true,
+export const POSTS = {
+  component: Posts,
+  path: 'posts',
+  label: '포스트',
+  loginRequired: false,
+  onlyVisibleToAuthenticated: false,
 }
 
-export const PLAN_CREATION = {
-  component: PlanCreation,
-  path: `${PLANS.path}/creation`,
-  label: 'CREATE NEW PLAN',
+export const POST = {
+  component: Post,
+  path: 'posts/:id',
+  label: '포스트',
+  loginRequired: false,
+  onlyVisibleToAuthenticated: false,
+}
+
+export const WRITE = {
+  component: Write,
+  path: `${POSTS.path}/write`,
+  label: '포스트 작성',
   loginRequired: true,
   onlyVisibleToAuthenticated: true,
 }
@@ -25,7 +34,7 @@ export const PLAN_CREATION = {
 export const PROFILE = {
   component: Profile,
   path: 'profile',
-  label: 'PROFILE',
+  label: '프로필',
   loginRequired: true,
   onlyVisibleToAuthenticated: true,
 }
@@ -33,7 +42,7 @@ export const PROFILE = {
 export const LOGIN = {
   component: Login,
   path: 'login',
-  label: 'LOGIN',
+  label: '로그인',
   loginRequired: false,
   onlyVisibleToAnonymous: true,
 }
@@ -47,14 +56,15 @@ export const LOGOUT = {
 export const SIGNUP = {
   component: Signup,
   path: 'signup',
-  label: 'SIGNUP',
+  label: '회원가입',
   loginRequired: false
 }
 
 
 export default { 
-  PLANS, 
-  PLAN_CREATION,
+  POSTS,
+  POST,
+  WRITE,
   PROFILE,
   LOGIN, 
   LOGOUT, 

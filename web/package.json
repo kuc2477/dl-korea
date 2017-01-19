@@ -1,7 +1,7 @@
 {
-  "name": "devit-web",
+  "name": "dl-korea",
   "version": "1.0.0",
-  "description": "devit web client",
+  "description": "dl-korea",
   "main": "index.js",
   "scripts": {
     "test": "better-npm-run test",
@@ -41,7 +41,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kuc2477/devit-web.git"
+    "url": "git+https://github.com/kuc2477/dl-korea.git"
   },
   "keywords": [
     "web",
@@ -50,9 +50,9 @@
   "author": "Ha Junsoo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kuc2477/devit-web/issues"
+    "url": "https://github.com/kuc2477/dl-korea/issues"
   },
-  "homepage": "https://github.com/kuc2477/devit-web#readme",
+  "homepage": "https://github.com/kuc2477/dl-korea#readme",
   "dependencies": {
     "chart.js": "^1.1.1",
     "es6-promise": "^3.2.1",
@@ -63,7 +63,7 @@
     "immutable": "^3.8.1",
     "isomorphic-fetch": "^2.2.1",
     "keyboardjs": "^2.2.1",
-    "material-ui": "^0.15.1",
+    "material-ui": "^0.16.7",
     "moment": "^2.13.0",
     "normalize.css": "^4.2.0",
     "normalizr": "^2.1.0",
@@ -80,7 +80,7 @@
     "react-router-transition": "0.0.5",
     "react-slick": "^0.12.2",
     "react-swipeable-views": "^0.7.2",
-    "react-tap-event-plugin": "^1.0.0",
+    "react-tap-event-plugin": "^2.0.0",
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0",

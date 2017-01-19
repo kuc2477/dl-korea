@@ -3,10 +3,13 @@ import validate from 'validate.js'
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { CardTitle } from 'material-ui/Card'
+import Divider from 'material-ui/Divider'
 
 import MessageBox, { INFO, ERROR } from '../components/base/MessageBox'
 import LoginForm from '../components/login/LoginForm'
 import LoginButton from '../components/login/LoginButton'
+import FBLoginButton from '../components/login/FBLoginButton'
+import GoogleLoginButton from '../components/login/GoogleLoginButton'
 import SignupLinkButton from '../components/login/SignupLinkButton'
 import { authenticate, resendConfirmationMail } from '../actions/auth'
 import { SIGNUP } from '../constants/routes'
@@ -36,17 +39,15 @@ class Login extends React.Component {
       passwordError: ''
     }
   }
-    static TITLE = 'Manage your self development journey';
-    static SUBTITLE =
-      'Keep yourself motivated and share your experience ' +
-      'with your friends';
+    static TITLE = '딥러닝에 대해 이야기 해보세요';
+    static SUBTITLE = '인상깊게 읽은 논문을 공유하고, 통찰을 커뮤니티와 함께 나누세요'
 
     static STYLE = {
-      marginTop: 80,
+      marginTop: 180,
     };
 
     static TITLE_ROW_STYLE = {
-      marginBottom: 30
+      marginBottom: 40
     };
 
     static FORM_ROW_STYLE = {
@@ -63,7 +64,14 @@ class Login extends React.Component {
     };
 
     static BTN_ROW_STYLE = {
-      marginTop: 10
+      marginTop: 10,
+      paddingLeft: 20,
+      paddingRight: 20,
+    };
+
+    static TEXT_ROW_STYLE = {
+      marginTop: 20,
+      marginBottom: 20,
     };
 
     static BTN_STYLE = {
@@ -158,52 +166,27 @@ class Login extends React.Component {
 
     return (
       <div style={this.constructor.STYLE}>
-
         <div className="row center-md" style={this.constructor.TITLE_ROW_STYLE}>
           <CardTitle className="col-md"
             title={this.constructor.TITLE}
             subtitle={this.constructor.SUBTITLE}
           />
+
         </div>
-
-        <div className="row center-md" style={this.constructor.FORM_ROW_STYLE}>
-          <LoginForm className="col-md-3" {...formProps} />
-        </div>
-
-        {
-          didAuthFail ?
-          <div className="row center-md" style={this.constructor.ERROR_ROW_STYLE}>
-            <MessageBox className="col-md" message={errorMessage} type={ERROR} />
-          </div> : null
-        }
-
-        {
-          didNotConfirmed ?
-            <div className="row center-md" style={this.constructor.ERROR_SUB_ROW_STYLE}>
-              <MessageBox className="col-md"
-                message="[ Resend confirmation mail ]"
-                type={ERROR}
-                size={12}
-                onClick={::this.resend}
-              />
-            </div> : null
-        }
 
         <div className="row center-md" style={this.constructor.BTN_ROW_STYLE}>
-          <LoginButton className="col-md-3"
+          <FBLoginButton className="col-md-3"
             style={this.constructor.BTN_STYLE}
-            isAuthenticating={isAuthenticating}
             onClick={::this.login}
           />
         </div>
 
         <div className="row center-md" style={this.constructor.BTN_ROW_STYLE}>
-          <SignupLinkButton className="col-md-3"
+          <GoogleLoginButton className="col-md-3"
             style={this.constructor.BTN_STYLE}
-            onClick={::this.goToSignup}
+            onClick={::this.login}
           />
         </div>
-
       </div>
     )
   }

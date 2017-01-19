@@ -13,7 +13,6 @@ from .extensions import (
     register_error_handlers,
 )
 from .users.views import bp as users_bp
-from .plans.views import bp as plans_bp
 from .main.views import bp as main_bp
 
 
@@ -45,7 +44,7 @@ def create_app(cfg):
 
     # register blueprints and error handlers
     register_blueprints(app, main_bp)
-    register_api_blueprints(app, users_bp, plans_bp)
+    register_api_blueprints(app, users_bp)
     register_error_handlers(app)
     return app
 
