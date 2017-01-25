@@ -11,14 +11,15 @@ export default class PostList extends React.Component {
 
   render() {
     const { STYLE } = this.constructor
-    const { posts, postsById } = this.props
+    const { posts, postsById, ...rest } = this.props
     const postItems = posts.map(id => (<PostItem id={id} {...postsById.get(id)}/>))
     return (
       <div>
         <InfiniteList
+          {...rest}
           useWindowAsScrollContainer
-          containerHeight={1200}
-          elementHeight={350}
+          containerHeight={400}
+          elementHeight={150}
           style={STYLE}
         >
           {postItems}

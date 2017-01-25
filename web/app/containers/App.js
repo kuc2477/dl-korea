@@ -43,13 +43,13 @@ class App extends React.Component {
   render() {
     return (
       <MuiThemeProvider>
-        <div className="full-height">
+        <div>
           <Nav 
             location={this.props.location} 
             user={this.props.user} 
             dispatch={this.props.dispatch} 
           />
-          <div className="full-height" style={this.constructor.STYLE}>
+          <div style={this.constructor.STYLE}>
             {this.props.children}
           </div>
           <Snackbar
